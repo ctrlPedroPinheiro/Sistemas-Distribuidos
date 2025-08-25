@@ -24,7 +24,6 @@ public class Cliente {
                 System.out.println("Mês " + (i+1) + ": " + resultado.getJurosMensais().get(i));
             }
             sc.close();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
