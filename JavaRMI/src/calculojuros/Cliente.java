@@ -10,7 +10,7 @@ public class Cliente {
             System.out.print("Digite o valor do investimento: ");
             double investimento = sc.nextDouble();
 
-            System.out.print("Digite a taxa de juros (ex: 0.05 para 5%): ");
+            System.out.print("Digite a taxa de juros (Decimal): ");
             double taxa = sc.nextDouble();
 
             System.out.print("Digite o número de meses: ");
@@ -21,7 +21,7 @@ public class Cliente {
             System.out.println("Valor total a receber: " + resultado.getValorTotal());
             System.out.println("Juros acumulados por mês:");
             for (int i = 0; i < resultado.getJurosMensais().size(); i++) {
-                System.out.println("Mês " + (i+1) + ": " + resultado.getJurosMensais().get(i));
+                System.out.printf("Mês %d: %.2f%n", (i+1), resultado.getJurosMensais().get(i));
             }
             sc.close();
         } catch (Exception e) {
