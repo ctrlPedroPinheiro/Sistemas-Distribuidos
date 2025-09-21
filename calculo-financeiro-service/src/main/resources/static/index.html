@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Financeira</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f9; color: #333; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1, h2 { color: #0056b3; }
+        .calculator { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: calc(100% - 16px); padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #007bff; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #0056b3; }
+        pre { background-color: #e9ecef; padding: 15px; border-radius: 4px; white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dashboard do Microsserviço Financeiro</h1>
+
+        <div class="calculator">
+            <h2>Calcular Juros Compostos</h2>
+            <form id="jurosForm">
+                <label for="valorInicial">Valor Inicial:</label>
+                <input type="number" id="valorInicial" value="1000" required>
+                <label for="taxaJuros">Taxa de Juros Mensal (%):</label>
+                <input type="number" id="taxaJuros" value="5" step="0.1" required>
+                <label for="meses">Meses:</label>
+                <input type="number" id="meses" value="6" required>
+                <button type="submit">Calcular</button>
+            </form>
+        </div>
+
+        <div class="calculator">
+            <h2>Calcular Tabela Price (Amortização)</h2>
+            <form id="priceForm">
+                <label for="valorFinanciado">Valor Financiado:</label>
+                <input type="number" id="valorFinanciado" value="5000" required>
+                <label for="taxaPrice">Taxa de Juros Mensal (%):</label>
+                <input type="number" id="taxaPrice" value="1.5" step="0.1" required>
+                <label for="parcelas">Número de Parcelas:</label>
+                <input type="number" id="parcelas" value="4" required>
+                <button type="submit">Calcular</button>
+            </form>
+        </div>
+
+        <h2>Resultados</h2>
+        <pre id="resultado">Aguardando cálculo...</pre>
+    </div>
+
+    <script>
+        const resultadoDiv = document.getElementById('resultado');
+
+        // Lógica para o formulário de Juros Compostos
+        document.getElementById('jurosForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const payload = {
+                valorInicial: parseFloat(document.getElementById('valorInicial').value),
+                taxaJurosMensal: parseFloat(document.getElementById('taxaJuros').value),
+                meses: parseInt(document.getElementById('meses').value)
+            };
+            
+            chamarApi('/api/calculo/juros-compostos', payload);
+        });
+
+        // Lógica para o formulário da Tabela Price
+        document.getElementById('priceForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const payload = {
+                valorFinanciado: parseFloat(document.getElementById('valorFinanciado').value),
+                taxaJurosMensal: parseFloat(document.getElementById('taxaPrice').value),
+                numeroParcelas: parseInt(document.getElementById('parcelas').value)
+            };
+            
+            chamarApi('/api/calculo/tabela-price', payload);
+        });
+
+        // Função genérica para chamar a API
+        async function chamarApi(endpoint, body) {
+            resultadoDiv.textContent = 'Calculando...';
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erro na API: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                // Formata o JSON para exibição
+                resultadoDiv.textContent = JSON.stringify(data, null, 2);
+
+            } catch (error) {
+                resultadoDiv.textContent = `Erro ao calcular: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
